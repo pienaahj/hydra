@@ -1,3 +1,3 @@
 module github.com/pienaahj/hydra
 
-go 1.17
+go 1.19
