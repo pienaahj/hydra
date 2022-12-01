@@ -15,7 +15,7 @@ type ConfS struct {
 
 func main() {
 	configstruct := new(ConfS)
-	h.GetConfiguration(h.CUSTOM, configstruct, "configfile")
+	h.GetConfiguration(h.CUSTOM, configstruct, "configfile.conf")
 	fmt.Println(*configstruct)
 
 	if configstruct.TB {

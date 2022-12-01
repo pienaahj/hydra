@@ -3,6 +3,7 @@ package hydraConfigurator
 import (
 	"errors"
 	"reflect"
+	"fmt"
 )
 
 const (
@@ -27,6 +28,7 @@ func GetConfiguration(confType uint8, obj interface{}, filename string) (err err
 
 	switch confType {
 	case CUSTOM:
+		fmt.Println("CUSTOM case selected...")
 		err = MarshalCustomConfig(mysRValue, filename)
 	}
 	return err

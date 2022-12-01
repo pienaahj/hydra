@@ -67,7 +67,6 @@ func MarshalCustomConfig(v reflect.Value, filename string) error {
 		valuetype := strings.Split(args[1], ";")
 		name, value, vtype := strings.TrimSpace(name), strings.TrimSpace(valuetype[0]), strings.ToUpper(valuetype[1])
 		fields.Add(name, value, vtype)
-		fmt.Printf("name: %v, value: %v, vtype: %v\n", name, value, vtype)
 	}
 	if err := scanner.Err(); err != nil {
 		return err
