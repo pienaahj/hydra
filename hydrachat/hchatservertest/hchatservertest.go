@@ -9,6 +9,6 @@ import (
 func main() {
 	exit := make(chan bool)
 	fmt.Println("Server starting at port 2100...")
-	hydrachat.Run()
+	hydrachat.Run(":2300")
 	<-exit
 }
