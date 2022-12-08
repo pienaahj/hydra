@@ -2,12 +2,14 @@ package hydraConfigurator
 
 import (
 	"errors"
-	"reflect"
 	"fmt"
+	"reflect"
 )
 
 const (
 	CUSTOM uint8 = iota
+	JSON
+	XML
 )
 
 var wrongTypeError error = errors.New("type must be a pointer to a struct")
@@ -30,6 +32,12 @@ func GetConfiguration(confType uint8, obj interface{}, filename string) (err err
 	case CUSTOM:
 		fmt.Println("CUSTOM case selected...")
 		err = MarshalCustomConfig(mysRValue, filename)
+	case JSON:
+		fmt.Println("JSON case selected...")
+		err = decodeJSONConfig(obj, filename)
+	case XML:
+		fmt.Println("XML case selected...")
+		err = decodeXMLConfig(obj, filename)
 	}
 	return err
 }

@@ -11,7 +11,7 @@ import (
 
 var logger = hlogger.GetInstance()
 
-// Run implements the tcp hydra chat server
+// Run implements the tcp hydra chat server - this routine will block while the listening continues
 func Run(connection string) error {
 	fmt.Println("Listening on port ", connection)
 	l, err := net.Listen("tcp", connection)
