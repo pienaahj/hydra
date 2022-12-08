@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strconv"
 )
 
 func main() {
@@ -30,7 +31,7 @@ func main() {
 
 	for {
 		record, err := r.Read()
-		if err != io.EOF {
+		if err == io.EOF {
 			break
 		}
 		if err != nil {
@@ -38,6 +39,7 @@ func main() {
 				fmt.Println("bad column:", pe.Column)
 				fmt.Println("bad line:", pe.Line)
 				fmt.Println("Error reported:", pe.Err)
+				// after printing the error message continue to the end of the file
 				if pe.Err == csv.ErrFieldCount {
 					continue
 				}
@@ -46,5 +48,11 @@ func main() {
 			log.Fatal(err)
 		}
 		fmt.Println("CSV Row:", record)
+
+		i, err := strconv.Atoi(record[1])
+		if err != nil {
+			log.Fatal()
+		}
+		fmt.Println(i * 4)
 	}
 }
