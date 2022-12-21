@@ -28,6 +28,7 @@ func runServer(dest string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	//  this loop will onloy start if the data on the channel becomes available
 	for mesg := range recvChan {
 		log.Println("Received: ", mesg)
 	}
@@ -39,12 +40,35 @@ func runClient(dest string) {
 		Shipname:    "Hydra",
 		CaptainName: "Jala",
 		Crew: []*hydraproto.Ship_CrewMember{
-			&hydraproto.Ship_CrewMember{1, "Kevin", 5, "Pilot"},
-			&hydraproto.Ship_CrewMember{2, "Jade", 4, "Tech"},
-			&hydraproto.Ship_CrewMember{3, "Wally", 3, "Engineer"},
+			{
+				Id:           1,
+				Name:         "Kevin",
+				SecClearance: 5,
+				Position:     "Pilot",
+			},
+			{
+				Id:           2,
+				Name:         "Jade",
+				SecClearance: 4,
+				Position:     "Tech",
+			},
+			{
+				Id:           3,
+				Name:         "Wally",
+				SecClearance: 3,
+				Position:     "Engineer",
+			},
 		},
 	}
 	if err := c.EncodeAndSend(ship, dest); err != nil {
 		log.Println("Error occured while sending message", err)
 	}
 }
+
+/* to run
+server
+go run testclient.go -type s -addr :8484
+client
+go run testclient.go -type c -addr :8484
+
+*/

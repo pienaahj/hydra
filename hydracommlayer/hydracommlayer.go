@@ -1,6 +1,6 @@
 package hydracommlayer
 
-import "Hydra/hydracommlayer/hydraproto"
+import "github.com/pienaahj/hydra/hydracommlayer/hydraproto"
 
 // Communication messages
 const (
