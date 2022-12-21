@@ -1,0 +1,1 @@
+protoc -I=hydraproto --go_out=. hydraproto/ship.proto

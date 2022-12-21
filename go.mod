@@ -5,9 +5,11 @@ go 1.19
 // replace github.com/pienaahj/hydra/HydraConfigurator ./Hydraconfigurator
 
 require (
+	github.com/boltdb/bolt v1.3.1
 	github.com/go-sql-driver/mysql v1.7.0
 	github.com/spf13/viper v1.14.0
 	go.mongodb.org/mongo-driver v1.11.1
+	google.golang.org/protobuf v1.28.1
 )
 
 require (

@@ -71,7 +71,7 @@ func main() {
 	// Perform a single query
 	filter = bson.D{{"id", 3}}
 	cm := crewMember{}
-	personnel.FindOne(context.TODO(), filter).Decode(&cm)
+	err = personnel.FindOne(context.TODO(), filter).Decode(&cm)
 	if err != nil {
 		log.Printf("Error while retrieving ")
 	}
