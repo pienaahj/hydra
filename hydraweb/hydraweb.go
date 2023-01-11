@@ -10,9 +10,9 @@ import (
 
 func Run() {
 	http.HandleFunc("/", sroot)
-	http.Handle("testhandle", newHandler())
+	http.Handle("/testhandle", newHandler())
 	http.HandleFunc("/testQuery", queryTestHandler)
-	http.ListenAndServe(":8080", nil) . // Defaultservmux is default
+	http.ListenAndServe(":8080", nil) // Defaultservmux is default
 
 }
 

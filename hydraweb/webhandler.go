@@ -15,7 +15,7 @@ type testhandler struct {
 
 // Create a constructor
 func newHandler() testhandler {
-	rInt, err := rand.Int(bytes.NewReader([]byte("testbyte")), big.NewInt(10))
+	rInt, err := rand.Int(bytes.NewReader([]byte("testbyte")), big.NewInt(100))
 	if err != nil {
 		log.Fatal("cannot get INT", err)
 	}
