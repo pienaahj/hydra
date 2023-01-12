@@ -15,7 +15,7 @@ type mongoDataStore struct {
 	*mongo.Client
 }
 
-func NewMongoStore(conn string) *mongoDataStore {
+func NewMongoStore(conn string) (*mongoDataStore, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(conn))
@@ -32,9 +32,10 @@ func NewMongoStore(conn string) *mongoDataStore {
 
 	if err != nil {
 		log.Fatal("Cannot ping mongodb", err)
+		return &mongoDataStore{}, err
 	}
 	fmt.Println("Connected to MongoDB!")
-	return &mongoDataStore{Client: client}
+	return &mongoDataStore{Client: client}, nil
 }
 
 func (s *mongoDataStore) AddMember(cm *CrewMember) error {

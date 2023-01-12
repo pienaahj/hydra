@@ -10,7 +10,7 @@ const (
 	mysql   = "mysql"
 )
 
-var ErrDBTypeNotFound = errors.New("Database type not found...")
+var ErrDBTypeNotFound = errors.New("database type not found ")
 
 type DBLayer interface {
 	AddMember(cm *CrewMember) error
