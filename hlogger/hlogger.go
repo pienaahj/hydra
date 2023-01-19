@@ -8,23 +8,22 @@ import (
 
 // hydraLogger struct for the hydra logger
 type hydraLogger struct {
-	* log.Logger
+	*log.Logger
 	filename string
 }
 
 var (
 	hlogger *hydraLogger
-	once sync.Once
+	once    sync.Once
 )
 
 // GetInstance creates a singleton instance of the hydra logger
 func GetInstance() *hydraLogger {
-	once.Do(func ()  {
+	once.Do(func() {
 		hlogger = createLogger("hydralogger.log")
 	})
 	return hlogger
 }
-
 
 // Create a logger instance
 func createLogger(fname string) *hydraLogger {
@@ -33,7 +32,7 @@ func createLogger(fname string) *hydraLogger {
 	// return a initialized hydraLogger pointer
 	return &hydraLogger{
 		filename: fname,
-		Logger: log.New(file, "Hydra ", log.Lshortfile),
+		Logger:   log.New(file, "Hydra ", log.Lshortfile),
 	}
 
 }

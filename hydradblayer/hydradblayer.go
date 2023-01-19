@@ -21,7 +21,7 @@ type DBLayer interface {
 type CrewMember struct {
 	ID           int    `json:"id" bson:"id"`
 	Name         string `json:"name" bson:"name"`
-	SecClearance int    `json:"clearance" bson:"security clearance"`
+	SecClearance int    `json:"security clearance" bson:"security clearance"`
 	Position     string `json:"position" bson:"position"`
 }
 

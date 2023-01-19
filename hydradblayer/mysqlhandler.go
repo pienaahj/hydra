@@ -2,6 +2,7 @@ package hydradblayer
 
 import (
 	"database/sql"
+	"log"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -13,6 +14,7 @@ type mySqlDataStore struct {
 func NewMySQLDataStore(conn string) (*mySqlDataStore, error) {
 	db, err := sql.Open("mysql", conn)
 	if err != nil {
+		log.Printf("error opening connection, %s\n", conn)
 		return nil, err
 	}
 	return &mySqlDataStore{DB: db}, nil

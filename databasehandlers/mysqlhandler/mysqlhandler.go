@@ -36,12 +36,12 @@ func main() {
 	}
 
 	//  populate the database from csv file
-	// CSVToMySQL(db)
+	CSVToMySQL(db)
 
 	cw := GetCrewByPositions(db, []string{"'Mechanic'", "'Biologist'"})
 	fmt.Println(cw)
 
-	fmt.Println(GetCrewMemberById(db, 11))
+	fmt.Println(GetCrewMemberById(db, 3))
 	// output {11 Noble Luczynski   4 Mechanic}
 
 	fmt.Println(GetCrewMemberByPosition(db, "Chemist"))
