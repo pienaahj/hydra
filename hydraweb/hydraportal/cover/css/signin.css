@@ -1,0 +1,81 @@
+
+body {
+  display: flex;
+  align-items: center;
+  background: url("../assets/battle_spaceship.jpg") no-repeat center center fixed;
+  text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
+  box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);
+  background-size: cover;
+  height: 100vh;
+  }
+
+.form-signin {
+  max-width: 330px;
+  padding: 15px;
+}
+
+.form-signin .form-floating:focus-within {
+  z-index: 2;
+}
+
+.form-signin input[type="text"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+
+@media only screen and (max-width: 516px) {
+    .tablescroll {
+      height: 200px;
+      overflow: scroll;
+    }
+    .table-display {
+      color: white !important;
+      font-weight: bold;
+      width: auto;
+    }
+    .window-width {
+      width: auto !important;
+    }
+  }
+  .cover-container {
+    height: 100%;
+  }
+  
+  .display-container {
+    background-color: RGBA(248,249,250,var(--bs-bg-opacity,0.5))!important;
+    color: white !important;
+    font-weight: bold;
+    font-size: large;
+  }
+
+  .tablescroll {
+    height: 200px;
+    overflow: scroll;
+  }
+  
+  .nav-masthead .nav-link {
+    color: rgba(255, 255, 255, .5);
+    border-bottom: .25rem solid transparent;
+  }
+  
+  .nav-masthead .nav-link:hover,
+  .nav-masthead .nav-link:focus {
+    border-bottom-color: rgba(255, 255, 255, .25);
+  }
+  
+  .nav-masthead .nav-link + .nav-link {
+    margin-left: 1rem;
+  }
+  
+  .nav-masthead .active {
+    color: #fff;
+    border-bottom-color: #fff;
+  }

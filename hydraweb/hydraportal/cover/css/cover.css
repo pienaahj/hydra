@@ -24,6 +24,20 @@ body {
   height: 100vh;
 }
 
+@media only screen and (max-width: 516px) {
+  .tablescroll {
+    height: 200px;
+    overflow: scroll;
+  }
+  .table-display {
+    color: white !important;
+    font-weight: bold;
+    width: auto;
+  }
+  .window-width {
+    width: auto !important;
+  }
+}
 .cover-container {
   
   height: 100%;
@@ -33,12 +47,20 @@ body {
   background-color: RGBA(248,249,250,var(--bs-bg-opacity,0.5))!important;
   color: white !important;
   font-weight: bold;
+  font-size: large;
 }
 
 .table-display {
   color: white !important;
   font-weight: bold;
   width: auto;
+}
+.column-width {
+  text-align:center;
+  padding:5px;
+  border-collapse: separate;
+  border-spacing:20px 0px;
+  border-color: #828286;
 }
 
 .tablescroll {

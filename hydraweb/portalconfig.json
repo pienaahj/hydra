@@ -1,3 +1,9 @@
 {
-    "filespath": "./hydraweb/hydraportal/cover/"
+    "filespath": "./hydraweb/hydraportal/cover/",
+    "templates": ["./hydraweb/hydraportal/cover/Crew/crew.html",
+                    "./hydraweb/hydraportal/cover/about/about.html",
+                    "./hydraweb/hydraportal/cover/Chat/chat.html",
+                    "./hydraweb/hydraportal/cover/Chat/login.html",
+                    "./hydraweb/hydraportal/cover/Common/header.tmpl",
+                    "./hydraweb/hydraportal/cover/Common/footer.tmpl"]
 }

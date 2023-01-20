@@ -1,9 +1,12 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"strings"
 
 	"github.com/pienaahj/hydra/hlogger"
+	"github.com/pienaahj/hydra/hydrachat"
 	"github.com/pienaahj/hydra/hydraweb/hydraportal"
 )
 
@@ -11,10 +14,19 @@ func main() {
 	logger := hlogger.GetInstance()
 	logger.Println("Starting Hydra web service...")
 	fmt.Println("Started Hydralogger...")
-
-	err := hydraportal.Run()
-	if err != nil {
-		fmt.Println("Failed to start", err.Error())
+	operation := flag.String("o", "w", "Operation: w for web \n c for chat")
+	flag.Parse()
+	switch strings.ToLower(*operation) {
+	case "c":
+		err := hydrachat.Run(":2100")
+		if err != nil {
+			logger.Println("could not run hydra chat", err)
+		}
+	case "w":
+		err := hydraportal.Run()
+		if err != nil {
+			logger.Println("Could not run hydra portal", err)
+		}
 	}
 }
 

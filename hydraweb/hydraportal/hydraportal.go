@@ -1,19 +1,30 @@
 package hydraportal
 
 import (
+	"bufio"
+	"bytes"
+	"crypto/md5"
 	"fmt"
 	"html/template"
 	"log"
+	"net"
 	"net/http"
+	"sync"
 
 	hydraConfigurator "github.com/pienaahj/hydra/hydraconfigurator"
 	"github.com/pienaahj/hydra/hydradblayer"
 	hydratestapi "github.com/pienaahj/hydra/hydraweb/hydrarestapi"
+	"github.com/pienaahj/hydra/passwordvault"
 	"github.com/spf13/viper"
+	"golang.org/x/net/websocket"
 )
 
 // create the template
 var hydraWebTemplate *template.Template
+var historylog = struct {
+	logs          []string // chat history logs
+	*sync.RWMutex          // more than one person will be using this
+}{RWMutex: new(sync.RWMutex)}
 
 /*
 	func findDirFiles() {
@@ -37,10 +48,17 @@ func Run() error {
 	}
 	// make the deployment folder configurable
 	conf := struct {
-		Filespath string `json:"filespath"`
+		Filespath string   `json:"filespath"`
+		Templates []string `json:"templates"`
 	}{}
 	err = hydraConfigurator.GetConfiguration(hydraConfigurator.JSON, &conf, "./hydraweb/portalconfig.json")
 	if err != nil {
+		return err
+	}
+
+	hydraWebTemplate, err = template.ParseFiles(conf.Templates...)
+	if err != nil {
+		log.Println(err)
 		return err
 	}
 
@@ -52,8 +70,125 @@ func Run() error {
 	http.Handle("/", fs)
 	http.HandleFunc("/Crew/", crewhandler)
 	http.HandleFunc("/about/", abouthandler)
+	http.HandleFunc("/chat/", chathandler)
+	http.Handle("/chatRoom/", websocket.Handler(chatWS))
+	//  serve the TLS as it is a blocking call use a goroutine
+	go func() {
+		err = http.ListenAndServeTLS(":8062", "cert.pem", "key.pem", nil)
+		log.Println(err)
+	}()
 	return http.ListenAndServe(":8061", nil)
 }
+func chatWS(ws *websocket.Conn) {
+	chatserverIP := "127.0.0.1:2100"
+	conn, err := net.Dial("tcp", chatserverIP)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	defer conn.Close()
+	//  populate the message list in the browser
+	historylog.RLock() // lock the logs to read from it
+	for _, log := range historylog.logs {
+		err := websocket.Message.Send(ws, log)
+		if err != nil {
+			historylog.RUnlock()
+			return
+		}
+	}
+	historylog.RUnlock() // unlock the logs
+
+	//  don't block the other code execution
+	go func() {
+		//  use scanner to send chat messages
+		scanner := bufio.NewScanner(conn)
+		for scanner.Scan() {
+			message := scanner.Text()
+			err := websocket.Message.Send(ws, message)
+			if err != nil {
+				//  in production add recovery and reconnection logic here
+				return
+			}
+		}
+	}()
+
+	//  handle messages received via the websocket
+	for {
+		var message string
+		err := websocket.Message.Receive(ws, &message)
+		if err != nil {
+			return
+		}
+		//  write the message to the logs
+		_, err = conn.Write([]byte(message))
+		if err != nil {
+			historylog.Lock()
+			//  if the logs are more than 20 trim them
+			if len(historylog.logs) > 20 {
+				historylog.logs = historylog.logs[1:]
+			}
+			historylog.logs = append(historylog.logs, message)
+			historylog.Unlock()
+		}
+	}
+}
+
+func chathandler(w http.ResponseWriter, r *http.Request) {
+	nameStruct := struct {
+		Name string
+	}{}
+	r.ParseForm()
+	if len(r.Form) == 0 {
+		if cookie, err := r.Cookie("usernames"); err == nil {
+			hydraWebTemplate.ExecuteTemplate(w, "login.html", nil)
+			return
+		} else {
+			nameStruct.Name = cookie.Value
+			hydraWebTemplate.ExecuteTemplate(w, "chat.html", nameStruct)
+			return
+		}
+	}
+
+	if r.Method == "POST" {
+		var user, pass string
+		if v, ok := r.Form["username"]; ok && len(v) > 0 {
+			user = v[0]
+		}
+
+		if v, ok := r.Form["password"]; ok && len(v) > 0 {
+			pass = v[0]
+		}
+		// user := r.Form["username"][0]
+		// user := r.Form["password"][0]
+
+		if !verifyPassword(user, pass) {
+			hydraWebTemplate.ExecuteTemplate(w, "login.html", nil)
+			return
+		}
+
+		nameStruct.Name = user
+		if _, ok := r.Form["rememberme"]; ok {
+			cookie := http.Cookie{Name: "username", Value: user}
+			http.SetCookie(w, &cookie)
+		}
+	}
+	hydraWebTemplate.ExecuteTemplate(w, "chat.html", nameStruct)
+}
+
+func verifyPassword(username, pass string) bool {
+	db, err := passwordvault.ConnectPasswordVault()
+	if err != nil {
+		return false
+	}
+	defer db.Close()
+	data, err := passwordvault.GetPasswordBytes(db, username)
+	if err != nil {
+		return false
+	}
+	hashedPass := md5.Sum([]byte(pass))
+	return bytes.Equal(hashedPass[:], data)
+}
+
 func loadcredetials() (string, error) {
 	/*
 		MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
