@@ -13,8 +13,8 @@ import (
 
 	hydraConfigurator "github.com/pienaahj/hydra/hydraconfigurator"
 	"github.com/pienaahj/hydra/hydradblayer"
+	"github.com/pienaahj/hydra/hydradblayer/passwordvault"
 	hydratestapi "github.com/pienaahj/hydra/hydraweb/hydrarestapi"
-	"github.com/pienaahj/hydra/passwordvault"
 	"github.com/spf13/viper"
 	"golang.org/x/net/websocket"
 )
@@ -186,6 +186,7 @@ func verifyPassword(username, pass string) bool {
 		return false
 	}
 	hashedPass := md5.Sum([]byte(pass))
+	//  [:] converts [i] to []
 	return bytes.Equal(hashedPass[:], data)
 }
 
