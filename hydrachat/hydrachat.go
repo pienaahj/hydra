@@ -15,12 +15,12 @@ var logger = hlogger.GetInstance()
 func Run(connection string) error {
 	fmt.Println("Listening on port ", connection)
 	l, err := net.Listen("tcp", connection)
-	fmt.Println("Chatroom created")
 	if err != nil {
 		logger.Println("Error connecting to chat client", err)
 		return err
 	}
 	r := CreateRoom("HydraChat")
+	fmt.Println("Chatroom created")
 	go func(l net.Listener) {
 		fmt.Println("invoked listener")
 		for {
@@ -34,7 +34,8 @@ func Run(connection string) error {
 			go handleConnection(r, conn) // does not disturb the loop
 		}
 	}(l)
-	go func() { //do not block the Run function excution and check if the microservice is shutting down
+	go func() {
+		//do not block the Run function excution and check if the microservice is shutting down
 		//  Handle ctrl C
 		fmt.Println("Checking interupt")
 		ch := make(chan os.Signal, 1)

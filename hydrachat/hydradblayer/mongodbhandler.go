@@ -43,7 +43,7 @@ func (ms *mongoDataStore) AddMember(cm *CrewMember) error {
 func (ms *mongoDataStore) FindMember(id int) (CrewMember, error) {
 	personnel := ms.Client.Database("Hydra").Collection("Personnel")
 	filter := bson.D{{"id", id}}
-	cm := crewMember{}
+	cm := CrewMember{}
 	err := personnel.FindOne(context.TODO(), filter).Decode(&cm)
 	if err != nil {
 		return CrewMember{}, err

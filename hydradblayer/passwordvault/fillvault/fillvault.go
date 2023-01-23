@@ -16,6 +16,6 @@ func main() {
 	caropass := md5.Sum([]byte("caropass"))
 	passwordvault.AddBytesToVault(db, "Mina", minapass[:])
 	passwordvault.AddBytesToVault(db, "Jim", jimpass[:])
-	passwordvault.AddBytesToVault(db, "Carop", caropass[:])
+	passwordvault.AddBytesToVault(db, "Caro", caropass[:])
 	db.Close()
 }

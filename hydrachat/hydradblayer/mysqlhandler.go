@@ -39,7 +39,7 @@ func (msql *mySqlDataStore) AllMembers() (crew, error) {
 	defer rows.Close()
 	members := crew{}
 	for rows.Next() {
-		member := crewMember{}
+		member := CrewMember{}
 		err = rows.Scan(&member.ID, &member.Name, &member.SecClearance, &member.Position)
 		if err == nil {
 			members = append(members, member)

@@ -40,7 +40,7 @@ $(function() {
     var msgBox = document.querySelector("#chatbox textarea");
     var label = document.querySelector("#chatbox label");
     var messages = document.querySelector("#messages");
-    document.querySelector("#chatbox").addEventListener("submit", function(event) {
+    document.getElementById("chatbox").addEventListener("submit", function(event) {
       event.preventDefault();
       if (!msgBox.value) return false; //there is no message
       if (!socket) { //there is no active socket
@@ -59,15 +59,15 @@ $(function() {
     } else {
     // check the protocol and construct a new websocket
       if (window.location.protocol == "https:"){ 
-        socket = new WebSocket("wss://localhost:8062/ChatRoom/");
+        socket = new WebSocket("wss://localhost:8062/chatRoom/");
       } else {
-        socket = new WebSocket("ws://localhost:8061/ChatRoom/");
+        socket = new WebSocket("ws://localhost:8061/chatRoom/");
       }
       // notify that the websocket has closed
       socket.onclose = function() {
         alert("Connection has been closed.");
       }
-      // make the message and send it
+      // add new entry to textbox messages if message received
       socket.onmessage = function(e) {
         var node = document.createElement("LI");
         var textnode = document.createTextNode(e.data);

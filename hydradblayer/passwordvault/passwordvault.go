@@ -2,6 +2,7 @@ package passwordvault
 
 import (
 	"errors"
+	"log"
 
 	"github.com/boltdb/bolt"
 )
@@ -52,7 +53,7 @@ func GetPassword(db *bolt.DB, username string) (string, error) {
 	err := db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("PasswordVault"))
 		if b == nil {
-			return errors.New("Could not find password vault bucket!!")
+			return errors.New("could not find password vault bucket")
 		}
 		v := b.Get([]byte(username))
 		password = string(v)
@@ -69,9 +70,10 @@ func GetPasswordBytes(db *bolt.DB, username string) ([]byte, error) {
 	err := db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("PasswordVault"))
 		if b == nil {
-			return errors.New("Could not find password vault bucket!!")
+			return errors.New("could not find password vault bucket")
 		}
 		password = b.Get([]byte(username))
+		log.Println("Password retrieved from vault", string(password))
 		return nil
 	})
 	return password, err

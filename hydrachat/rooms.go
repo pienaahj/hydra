@@ -25,6 +25,7 @@ func CreateRoom(name string) *room {
 		Quit:    make(chan struct{}),
 	}
 	r.Run() //  method to initialise a room to start waiting for clients to connect
+	fmt.Println("Room created successfully")
 	return r
 }
 

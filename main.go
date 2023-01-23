@@ -14,15 +14,21 @@ func main() {
 	logger := hlogger.GetInstance()
 	logger.Println("Starting Hydra web service...")
 	fmt.Println("Started Hydralogger...")
+	//  -o w =>  hydra is running as a webserver
+	//  -o c => hydra is running as a tcp chat server
 	operation := flag.String("o", "w", "Operation: w for web \n c for chat")
 	flag.Parse()
 	switch strings.ToLower(*operation) {
 	case "c":
+		fmt.Println("running chat server...")
+		exit := make(chan bool)
 		err := hydrachat.Run(":2100")
 		if err != nil {
 			logger.Println("could not run hydra chat", err)
 		}
+		<-exit
 	case "w":
+		fmt.Println("running web server...")
 		err := hydraportal.Run()
 		if err != nil {
 			logger.Println("Could not run hydra portal", err)

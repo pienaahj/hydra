@@ -26,18 +26,17 @@ var historylog = struct {
 	*sync.RWMutex          // more than one person will be using this
 }{RWMutex: new(sync.RWMutex)}
 
-/*
-	func findDirFiles() {
-		files, err := os.ReadDir(".")
-		if err != nil {
-			log.Fatal(err)
-		}
+// func findDirFiles() {
+// 	files, err := os.ReadDir(".")
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
 
-		for _, file := range files {
-			fmt.Println(file.Name())
-		}
-	}
-*/
+// 	for _, file := range files {
+// 		fmt.Println(file.Name())
+// 	}
+// }
+
 func Run() error {
 	var err error
 	// findDirFiles()
@@ -70,13 +69,13 @@ func Run() error {
 	http.Handle("/", fs)
 	http.HandleFunc("/Crew/", crewhandler)
 	http.HandleFunc("/about/", abouthandler)
-	http.HandleFunc("/chat/", chathandler)
+	http.HandleFunc("/Chat/", chathandler)
 	http.Handle("/chatRoom/", websocket.Handler(chatWS))
-	//  serve the TLS as it is a blocking call use a goroutine
-	go func() {
-		err = http.ListenAndServeTLS(":8062", "cert.pem", "key.pem", nil)
+	// serve the TLS as it is a blocking call use a goroutine
+	go func(cert, key string) {
+		err = http.ListenAndServeTLS(":8062", cert, key, nil)
 		log.Println(err)
-	}()
+	}("./conf/cert.pem", "./conf/key.pem")
 	return http.ListenAndServe(":8061", nil)
 }
 func chatWS(ws *websocket.Conn) {
@@ -138,11 +137,15 @@ func chathandler(w http.ResponseWriter, r *http.Request) {
 		Name string
 	}{}
 	r.ParseForm()
+	fmt.Println("lenght for form: ", len(r.Form))
+	fmt.Printf("form contents: %v\n", r.Form)
 	if len(r.Form) == 0 {
-		if cookie, err := r.Cookie("usernames"); err == nil {
+		if cookie, err := r.Cookie("username"); err != nil {
+			fmt.Println("Rendering /login/")
 			hydraWebTemplate.ExecuteTemplate(w, "login.html", nil)
 			return
 		} else {
+			fmt.Println("Rendering /chat/")
 			nameStruct.Name = cookie.Value
 			hydraWebTemplate.ExecuteTemplate(w, "chat.html", nameStruct)
 			return
@@ -153,15 +156,18 @@ func chathandler(w http.ResponseWriter, r *http.Request) {
 		var user, pass string
 		if v, ok := r.Form["username"]; ok && len(v) > 0 {
 			user = v[0]
+			fmt.Println("usernames ", user)
 		}
 
 		if v, ok := r.Form["password"]; ok && len(v) > 0 {
 			pass = v[0]
+			fmt.Println("password ", pass)
 		}
 		// user := r.Form["username"][0]
 		// user := r.Form["password"][0]
 
 		if !verifyPassword(user, pass) {
+			log.Println("password verification failed")
 			hydraWebTemplate.ExecuteTemplate(w, "login.html", nil)
 			return
 		}
@@ -170,6 +176,7 @@ func chathandler(w http.ResponseWriter, r *http.Request) {
 		if _, ok := r.Form["rememberme"]; ok {
 			cookie := http.Cookie{Name: "username", Value: user}
 			http.SetCookie(w, &cookie)
+			log.Println("Cookie set suceeded with value ", user)
 		}
 	}
 	hydraWebTemplate.ExecuteTemplate(w, "chat.html", nameStruct)
@@ -178,15 +185,19 @@ func chathandler(w http.ResponseWriter, r *http.Request) {
 func verifyPassword(username, pass string) bool {
 	db, err := passwordvault.ConnectPasswordVault()
 	if err != nil {
+		log.Println("Error connecting to vault:", err)
 		return false
 	}
 	defer db.Close()
 	data, err := passwordvault.GetPasswordBytes(db, username)
 	if err != nil {
+		log.Println("Error getting password from vault:", err)
 		return false
 	}
 	hashedPass := md5.Sum([]byte(pass))
 	//  [:] converts [i] to []
+	log.Println("Password converted as ", hashedPass)
+	log.Println("Password bytes from vault ", data)
 	return bytes.Equal(hashedPass[:], data)
 }
 
